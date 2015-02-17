@@ -1,0 +1,304 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+<meta content="no" http-equiv="imagetoolbar"/>
+<title>Xyleme</title>
+<link type="text/css" rel="STYLESHEET" href="ContentPackages/IA/Transforms/Html_frameset/css/search.css?bv=288"/>
+<script type="text/javascript" src="ContentPackages/IA/Transforms/Html_frameset/prototype.js?bv=288"> /* IE bugfix */ </script><script type="text/javascript" src="ContentPackages/IA/Transforms/Html_frameset/frameset.js?bv=288"> /* IE bugfix */ </script><script type="text/javascript">
+		var directives = new Hash();
+		var directivesselected = null;
+		var isTitle = true;
+				
+		function filldirectives(x){
+			var cacheobj=document.searchForm.directives;
+			for (m=cacheobj.options.length; m>0; m--) {
+				cacheobj.options[m]=null;
+			}
+			for (i=0,j=0; directives.size() > i; i++){
+				var key = directives.keys()[i];
+				if (key == 'subjectarea' || key == '' || key.charAt(0) == '_' )	continue;
+				cacheobj.options[j++]=new Option(directives[key], key);
+			}
+			if (cacheobj.options[0])
+				cacheobj.options[0].selected=true;
+			fillsubjectarea(x);
+		}
+		
+		function fillsubjectarea(x){
+			var j = 0; 
+			var cacheobj=document.searchForm.subjectarea;
+			for (m=cacheobj.options.length; m>0; m--)
+				cacheobj.options[m]=null;
+			
+			var selIdx = document.searchForm.directives.selectedIndex;
+			var tt = '_' + document.searchForm.directives.options[selIdx].value + document.searchForm.directives.options[selIdx].value;
+			directivesselected = directives[tt];
+			if (directivesselected == null)	return;
+			for (i=0; directivesselected.size() > i; i++){
+				var key = directivesselected.keys()[i];
+				if (key == 'directive' || key == '' || key[0] == '_' ) continue;
+				cacheobj.options[j++]=new Option(directivesselected[key], key);
+			}
+			if (cacheobj.options[0])
+				cacheobj.options[0].selected=true;
+		}
+		
+		function directivesChange(x){
+			document.searchForm.directives.options[0].text="";
+			document.searchForm.subjectarea.disabled = (document.searchForm.directives.selectedIndex == 0);
+			fillsubjectarea(x);
+			var cacheobj = document.searchForm.directives;
+		}
+		
+		function subjectareaChange(x){
+			document.searchForm.subjectarea.options[0].text="";
+			var cacheobj = document.searchForm.subjectarea;
+		}
+
+		function dateChange(x){
+			
+		}
+		
+		function searchCPD() {
+			var month_names = "JanFebMarAprMayJunJulAugSepOctNovDec";
+			var search_dateb = document.searchForm.startday.value.replace(/ /g, '');
+			var search_datee = document.searchForm.endday.value.replace(/ /g, '');	
+			var searchWords = document.searchForm.search.value;					// search words
+			var search_ldaysIdx = document.searchForm.effectiveDate.selectedIndex;
+			var search_ldays = search_ldaysIdx == -1?'':document.searchForm.effectiveDate.options[search_ldaysIdx].value;
+			searchWords = searchWords.replace(/"/g, '').replace(/\#/g, '');
+			var selIdx = document.searchForm.directives.selectedIndex;			
+			var term1 = selIdx == -1?'':document.searchForm.directives.options[selIdx].value;
+			selIdx = document.searchForm.subjectarea.selectedIndex;
+			var term2 = selIdx == -1 || selIdx == 0?'':document.searchForm.subjectarea.options[selIdx].value;
+			var term = term2;													// directive type or subject
+			if (term == ''){
+				term = term1;
+			}
+			
+			var path, query, searchurl;
+			//var path = "/europa/crs?action=metadatasearch&directivetype=" + term1 +"&subjectarea=" + term2 + "&directiveitem=" + term3 + "&addendum=" + term4;
+			
+						path = "search_term1=" + term1 + "&search_term2=" + term2 + "&search_words=" + searchWords + "&search_ldays=" + search_ldays + "&search_dateb=" + search_dateb + "&search_datee=" + search_datee + "&par=" + top.location;
+						searchurl = '/cpd/search.jsp?' + path;
+						updatepage(searchurl);
+				
+		}
+		
+		function xmlhttpPost(strURL) {
+			var xmlHttpReq = false;
+			var self = this;
+			// Mozilla/Safari
+			if (window.XMLHttpRequest) {
+				self.xmlHttpReq = new XMLHttpRequest();
+			}
+			// IE
+			else if (window.ActiveXObject) {
+				self.xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			self.xmlHttpReq.open('POST', strURL, true);
+			self.xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+			self.xmlHttpReq.onreadystatechange = function() {
+				if (self.xmlHttpReq.readyState == 4) {
+					updatepage(self.xmlHttpReq.responseText);
+				}
+			}
+			self.xmlHttpReq.send(null);
+		}
+
+		function updatepage(str){
+			top.frames[0].frames[1].frames[1].frames[0].location = str;
+		}
+		
+		directives['default']='Document Types'; 
+			directives['GO'] = 'General Order';	
+			
+				var subjectarea = new Hash();
+				subjectarea['default']='Subject Area'; 
+					subjectarea['G01'] = 'Department Organization';					
+				
+					subjectarea['G02'] = 'Human Rights and Community Partnerships';					
+				
+					subjectarea['G03'] = 'Field Operations';					
+				
+					subjectarea['G04'] = 'Preliminary Investigations';					
+				
+					subjectarea['G05'] = 'Extraordinary Responses';					
+				
+					subjectarea['G06'] = 'Processing Persons';					
+				
+					subjectarea['G07'] = 'Processing Property';					
+				
+					subjectarea['G08'] = 'Professionalism';					
+				
+					subjectarea['G09'] = 'Information Management';					
+				
+					subjectarea['G10'] = 'Gang and Narcotic Abatement';					
+				
+				
+				directives['_GOGO'] = subjectarea;
+			
+			directives['SO'] = 'Special Order';	
+			
+				var subjectarea = new Hash();
+				subjectarea['default']='Subject Area'; 
+					subjectarea['S01'] = 'Department Organization';					
+				
+					subjectarea['S02'] = 'Human Rights and Community Partnerships';					
+				
+					subjectarea['S03'] = 'Field Operations';					
+				
+					subjectarea['S04'] = 'Preliminary Investigations';					
+				
+					subjectarea['S05'] = 'Extraordinary Responses';					
+				
+					subjectarea['S06'] = 'Processing Persons';					
+				
+					subjectarea['S07'] = 'Processing Property';					
+				
+					subjectarea['S08'] = 'Professionalism';					
+				
+					subjectarea['S09'] = 'Information Management';					
+				
+					subjectarea['S10'] = 'Gang and Narcotic Abatement';					
+				
+					subjectarea['S11'] = 'Training';					
+				
+					subjectarea['S12'] = 'Outside Organizations';					
+				
+				
+				directives['_SOSO'] = subjectarea;
+			
+			directives['ERM'] = 'Employee Resource';	
+			
+				var subjectarea = new Hash();
+				subjectarea['default']='Subject Area'; 
+					subjectarea['E01'] = 'Employee Rights and Responsibilities';					
+				
+					subjectarea['E02'] = 'Payroll and Timekeeping';					
+				
+					subjectarea['E03'] = 'Medical, Health, and Wellness';					
+				
+					subjectarea['E04'] = 'Assignments and Details';					
+				
+					subjectarea['E05'] = 'Career Development';					
+				
+					subjectarea['E06'] = 'Personnel Support';					
+				
+					subjectarea['E07'] = 'Benefits';					
+				
+					subjectarea['E08'] = 'Outside Organization Programs';					
+				
+				
+				directives['_ERMERM'] = subjectarea;
+			
+			directives['UPM'] = 'Uniform and Property';	
+			
+				var subjectarea = new Hash();
+				subjectarea['default']='Subject Area'; 
+					subjectarea['U01'] = 'Department Equipment';					
+				
+					subjectarea['U02'] = 'Department Vehicles';					
+				
+					subjectarea['U03'] = 'Facilities';					
+				
+					subjectarea['U04'] = 'Uniform and Personal Equipment';					
+				
+					subjectarea['U05'] = 'Accountability';					
+				
+					subjectarea['U06'] = 'Uniform and Equipment Specifications';					
+				
+				
+				directives['_UPMUPM'] = subjectarea;
+			
+			directives['DN'] = 'Department Notice';	
+			
+				var subjectarea = new Hash();
+				subjectarea['default']='Subject Area'; 
+					subjectarea['D01'] = 'Department Notice';					
+				
+				
+				directives['_DNDN'] = subjectarea;
+			
+			directives['DR'] = 'Resources';	
+			
+				var subjectarea = new Hash();
+				subjectarea['default']='Subject Area'; 
+					subjectarea['DR02'] = 'Department Guides and Manuals';					
+				
+					subjectarea['DR01'] = 'Department Forms';					
+				
+					subjectarea['DR03'] = 'Emergency Action Plans';					
+				
+					subjectarea['DR04'] = 'Collective Bargaining Agreements (Contracts)';					
+				
+				
+				directives['_DRDR'] = subjectarea;
+			
+			directives['BOPSO'] = 'Bureau of Patrol Special Order';	
+			
+				var subjectarea = new Hash();
+				subjectarea['default']='Subject Area'; 
+					subjectarea['BOP01'] = 'BOPSO';					
+				
+				
+				directives['_BOPSOBOPSO'] = subjectarea;
+			
+		
+		function checkEnter(e) {
+			 var characterCode;
+			 if (e && e.which) { // NN4
+				  e = e;
+				  characterCode = e.which;
+			 }
+			 else {
+				  e = event;
+				  characterCode = e.keyCode; // IE 
+			 }
+			 
+			 if (characterCode == 13) { //if generated character code is equal to ascii 13 (if enter key)
+				  searchCPD();
+				  return false;
+			 }
+			 else {
+				  return true;
+			 }
+		}
+		
+	</script>
+</head>
+<body onLoad="javascript:top.searchloaded=1;filldirectives(0);">
+<div style="border-top: 2px solid gray;"/>
+<form style="padding:10px;text-align:left;" id="searchForm" action="" method="POST" name="searchForm">
+<div id="searchText1">Basic Search</div>
+<div style="border:2px solid gray;padding:10px;margin:1px;">
+<div style="display:none;" id="advanced">
+<div>Search:</div>
+<select onChange="directivesChange(true)" id="directives" style="width:90%;margin-top:15px;"><option value="default">Document Types</option>
+</select><select onChange="subjectareaChange()" disabled="true" id="subjectarea" style="width:90%;margin-top:15px;"><option value="default">Subject Area</option>
+</select><select onChange="dateChange()" id="effectiveDate" style="width:90%;margin-top:15px;"><option value="default">Effective Date in Last X month(s)</option><option value="month1">1 Month</option><option value="months3">3 Months</option><option value="months6">6 Months</option><option value="months12">12 Months</option>
+</select>
+<div style="padding-top:15px;padding-bottom:5px;">
+		Issued between:<br/>
+<input name="startday" id="startday" style="width:80px;" type="text"/>
+		and
+		<input name="endday" id="endday" style="width:80px;" type="text"/>
+</div><script>
+			calendar.set("startday");
+			calendar.set("endday");
+		</script>
+<div style="padding-top:8px">Containing this word or phrase:</div>
+</div>
+<div class="input">
+<input onKeyPress="return checkEnter(event);" class="input" id="search" name="search" style="width:90%;margin-top:15px;" type="text"/>
+</div>
+<div style="width:100%;text-align:right;">
+<input id="searchButton" name="searchButton" value="Search" onClick="searchCPD();" style="width:120px;height:30px;background-color:black;color:white;" type="button"/>
+</div>
+</div>
+<div id="searchText2" onClick="showAdvancedFields();" style="text-decoration: underline; cursor:pointer">Advanced Search</div>
+</form>
+</body>
+</html>
